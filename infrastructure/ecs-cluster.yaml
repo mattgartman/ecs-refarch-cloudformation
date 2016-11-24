@@ -30,6 +30,10 @@ Parameters:
         Description: Select the Security Group to use for the ECS cluster hosts
         Type: AWS::EC2::SecurityGroup::Id
 
+    KeyPairName:
+        Description: AWS KeyPair Name
+        Type: String
+
 Mappings:
 
     # These are the latest ECS optimized AMIs as of November 2016:
@@ -100,6 +104,7 @@ Resources:
             SecurityGroups: 
                 - !Ref SecurityGroup
             IamInstanceProfile: !Ref ECSInstanceProfile
+            KeyName: !Ref KeyPairName
             UserData: 
                 "Fn::Base64": !Sub |
                     #!/bin/bash
