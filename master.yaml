@@ -23,6 +23,10 @@ Parameters:
         Description: AWS KeyPair Name
         Type: String
 
+    BastionHostSecurityGroupName:
+        Type: String
+        Description: Name of the security group assigned to the Bastion
+
 Resources:
 
     VPC:
@@ -44,6 +48,7 @@ Resources:
             Parameters: 
                 EnvironmentName: !Ref AWS::StackName
                 VPC: !GetAtt VPC.Outputs.VPC
+                BastionHostSecurityGroupName: !Ref BastionHostSecurityGroupName
 
     ALB:
         Type: AWS::CloudFormation::Stack

@@ -13,6 +13,10 @@ Parameters:
         Type: AWS::EC2::VPC::Id
         Description: Choose which VPC the security groups should be deployed to
 
+    BastionHostSecurityGroupName:
+        Type: String
+        Description: Name of the security group assigned to the Bastion
+
 Resources:
 
     # This security group defines who/where is allowed to access the ECS hosts directly.
@@ -26,6 +30,8 @@ Resources:
             SecurityGroupIngress:
                 # Only allow inbound access to ECS from the ELB
                 - SourceSecurityGroupId: !Ref LoadBalancerSecurityGroup 
+                  IpProtocol: -1
+                - SourceSecurityGroupId: !Ref BastionHostSecurityGroupName
                   IpProtocol: -1
             Tags: 
                 - Key: Name
