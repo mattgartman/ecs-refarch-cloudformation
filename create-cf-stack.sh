@@ -1,5 +1,19 @@
 #!/bin/bash
-aws cloudformation create-stack --stack-name mrgEcs \
-    --template-body https://s3.amazonaws.com/cf-template-ecs-mrg123/master.yaml \
-    --parameters ParameterKey=s3BucketUrl,ParameterValue='https://s3.amazonaws.com/cf-template-ecs-mrg123' \
-    --capabilities 'CAPABILITY_NAMED_IAM'
+CF_STACKNAME='mrgEcs'
+CF_STACK_S3_URL='https://s3.amazonaws.com/cf-template-ecs-mrg123'
+CF_KEYPAIRNAME='mrgEcsKeyPair'
+
+
+if aws cloudformation describe-stacks --stack-name $CF_STACKNAME 2>&1 |grep -q 'does not exist'; then
+    echo 'creating new stack' 
+    aws cloudformation create-stack --stack-name $CF_STACKNAME \
+        --template-body $CF_STACK_S3_URL/master.yaml \
+        --parameters ParameterKey=s3BucketUrl,ParameterValue=$CF_STACK_S3_URL ParameterKey=KeyPairName,ParameterValue=$CF_KEYPAIRNAME \
+        --capabilities 'CAPABILITY_NAMED_IAM'
+else
+    echo 'updating stack'
+        aws cloudformation update-stack --stack-name $CF_STACKNAME \
+        --template-body $CF_STACK_S3_URL/master.yaml \
+        --parameters ParameterKey=s3BucketUrl,ParameterValue=$CF_STACK_S3_URL ParameterKey=KeyPairName,ParameterValue=$CF_KEYPAIRNAME \
+        --capabilities 'CAPABILITY_NAMED_IAM'
+fi
